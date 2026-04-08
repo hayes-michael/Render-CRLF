@@ -1,8 +1,21 @@
 'use strict'
 
 const vscode = require('vscode')
-const isWindows = process.platform === 'win32'
 
+// Determine the host platform to set the default EOL character(s) correctly when 'files.eol' is set to 'auto'
+function getIsWindowsHost() {
+    // If running locally in Node.js, use process.platform
+    if (typeof process !== 'undefined' && process.platform) {
+        return process.platform === 'win32'
+    }
+    // If running in a browser environment (e.g., VS Code Web), use navigator.userAgent and check if the browser is running on Windows
+    if (typeof navigator !== 'undefined' && typeof navigator.userAgent === 'string') {
+        return /Windows/i.test(navigator.userAgent)
+    }
+    // If platform cannot be determined, default to false (non-Windows)
+    return false
+}
+const isWindows = getIsWindowsHost()
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
